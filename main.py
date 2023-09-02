@@ -3,6 +3,8 @@ import csv
 import click
 import random
 import pandas as pd
+from datetime import datetime
+
 
 @click.group()
 def cli():
@@ -40,11 +42,15 @@ def show():
 def complete(taskid):
      taskIdConv = int(taskid)
      df = pd.read_csv("todo.csv")
-     ##print(df) Actual Dataframe
+     if taskIdConv not in df['TaskId'].values:
+         print(f"Task with ID {taskIdConv} not found.")
+         return
+     print("\n")
+     print(df) #Actual Dataframe
      df = df.drop(df[df.TaskId == taskIdConv].index,inplace=False)
      df.to_csv("todo.csv", index=False)
-     print(f"Task with ID {taskid} removed successfully")
-     print("After removal:")
+     print("\n")
+     print(f"After Completing the Task with id {taskIdConv} \n")
      print(df) #Updated DataFrame
 
 @cli.command()
@@ -55,8 +61,11 @@ def complete(taskid):
 def edit(taskid):
     try:
         # Read the CSV file using Pandas
-        taskIdConv = int(taskid)
         df = pd.read_csv("todo.csv")
+        taskIdConv = int(taskid)
+        if taskIdConv not in df['TaskId'].values:
+            print(f"Task with ID {taskIdConv} not found.")
+            return
         print("Actual data is ")
         print(df.loc[df['TaskId'] == taskIdConv])
         print("\n")
@@ -73,11 +82,17 @@ def edit(taskid):
         dat = input("Do you want to update due_date (y/n)\t")
         if (dat == 'y'):
             due_date = input("Enter the new due_date\t")
+            try:
+                datetime.strptime(due_date, "%Y-%m-%d")
+            except ValueError:
+                print("Invalid date format. Please use YYYY-MM-DD.")
+                return
+
             df.loc[df['TaskId'] == taskIdConv, 'DueDate'] = due_date
 
         # # Write the modified DataFrame back to the CSV file
         df.to_csv("todo.csv", index=False)
-        #
+
         print(f"Task with ID {taskIdConv} edited successfully")
         print("After editing:")
         print(df)
