@@ -29,8 +29,7 @@ A command-line tool for managing your to-do tasks. Easily create, view, complete
     python app.py add --create "Title,Description,2024-05-20"
     
   Example:
-    ```
-    
+   
     python app.py add --create "Buy groceries,Buy milk and bread,2024-05-20"
     
 3. Show All Tasks:
